@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>实时预览 Markdown</title>
+  <link rel="stylesheet" href="https://cdn.staticfile.org/layui/2.5.7/css/layui.min.css">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/11.2.0/styles/atom-one-dark.min.css">
+  <style>
+    .layui-input {
+      height: 300px;
+    }
+
+    .markdown-output {
+      background-color: white;
+      color: black;
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="layui-container">
+    <h1>实时预览 Markdown</h1>
+    <div class="layui-row">
+      <div class="layui-col-md6 layui-col-md-offset3">
+        <form class="layui-form">
+          <div class="layui-form-item">
+            <label class="layui-form-label">输入框</label>
+            <div class="layui-input-block">
+              <textarea id="input-textarea" class="layui-textarea" placeholder="请输入 Markdown 文本"></textarea>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">输出框</label>
+            <div class="layui-input-block">
+              <div id="output-container" class="markdown-output"></div>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+              <button type="button" class="layui-btn" id="convert-btn">转换</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.staticfile.org/layui/2.5.7/layui.min.js"></script>
+  <script src="https://cdn.staticfile.org/marked/2.0.0/marked.min.js"></script>
+  <script src="https://cdn.staticfile.org/highlight.js/11.2.0/highlight.min.js"></script>
+  <script>
+  layui.use(['form'], function() {
+    const form = layui.form;
+    const inputTextarea = document.getElementById('input-textarea');
+    const outputContainer = document.getElementById('output-container');
+    const convertBtn = document.getElementById('convert-btn');
+
+    function convertMarkdownToHTML() {
+      const markdown = inputTextarea.value;
+      fetch('http://localhost:8080/getText?text=' + markdown)
+        .then(response => response.text())
+        .then(data => {
+          outputContainer.innerHTML = data;
+        })
+        .catch(error => console.error(error));
+    }
+
+    convertBtn.addEventListener('click', convertMarkdownToHTML);
+
+
+    hljs.initHighlightingOnLoad();
+  });
+</script>
+
+
+</body>
+</html>

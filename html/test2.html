@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>测试页面</title>
+    <!-- 引入layui框架的样式文件 -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/layui/2.5.7/css/layui.min.css">
+</head>
+<body>
+    <div class="layui-container">
+        <div class="layui-row layui-col-space15">
+            <!-- 左侧输入框 -->
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">输入框</div>
+                    <div class="layui-card-body">
+                        <input type="text" id="input-text" class="layui-input" placeholder="请输入要查询的数据">
+                        <button id="query-button" class="layui-btn layui-btn-normal">查询</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 右侧输出框 -->
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">输出框</div>
+                    <div id="output-area" class="layui-card-body layui-form">
+                        <div class="layui-form-item layui-form-text">
+                            <textarea id="output-text" class="layui-textarea" placeholder="输出框" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入jQuery和layui框架的JS文件 -->
+    <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/layui/2.5.7/layui.min.js"></script>
+    <script>
+        // 当页面加载完成后执行以下操作
+        $(function() {
+            // 监听查询按钮的点击事件
+            $('#query-button').click(function() {
+                // 获取输入框中的内容
+                var inputData = $('#input-text').val();
+                // 调用接口并将结果显示在输出框中
+                queryData(inputData);
+            });
+        });
+
+        // 封装查询数据的函数
+        function queryData(inputData) {
+            // 发送GET请求
+            $.get('http://localhost:8081/getText?text=' + inputData, function(response) {
+                // 将接口返回的数据显示在输出框中
+                $('#output-text').val(response);
+                // 使用Layui框架中的渲染函数对Markdown格式进行美化
+                layui.use('layedit', function() {
+                    var layedit = layui.layedit;
+                    layedit.build('output-text', {
+                        height: 400,
+                        tool: ['bold', 'italic', 'underline', 'strikeThrough', '|', 'fontFomatt', 'align', 'image', 'link']
+                    });
+                });
+            });
+        }
+    </script>
+</body>
+</html>

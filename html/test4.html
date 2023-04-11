@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Layui Demo</title>
+  <link rel="stylesheet" href="https://cdn.staticfile.org/layui/2.5.7/css/layui.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.2.0/styles/dracula.min.css">
+</head>
+<body>
+ 
+<div class="layui-container">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">Demo</div>
+        <div class="layui-card-body">
+          <form class="layui-form">
+            <div class="layui-form-item">
+              <div class="layui-input-block">
+                <input type="text" name="data" required lay-verify="required" placeholder="请输入数据" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="submit">提交</button>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-input-block">
+                <div id="output" name="output" class="layui-textarea"></div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<script src="https://cdn.staticfile.org/layui/2.5.7/layui.min.js"></script>
+<script src="https://cdn.staticfile.org/highlight.js/11.2.0/highlight.min.js"></script>
+<script src="https://cdn.staticfile.org/marked/2.0.0/marked.min.js"></script>
+<script>
+  layui.use(['form', 'layer'], function() {
+    var form = layui.form;
+    var layer = layui.layer;
+    
+    // 监听表单提交
+    form.on('submit(submit)', function(data){
+      // 显示遮罩层
+      var index = layer.load(1);
+      
+      // 发送get请求
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'http://localhost:8081/getText?text=' + data.field.data);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          // 隐藏遮罩层
+          layer.close(index);
+          
+          // 将返回的数据输出到输出框
+          var code = document.getElementById("output");
+          var html = marked(xhr.responseText);
+          code.innerHTML = html;
+          hljs.highlightBlock(code);
+        }
+      }
+      xhr.send();
+      
+      return false;
+    });
+  });
+</script>
+ 
+</body>
+</html>
