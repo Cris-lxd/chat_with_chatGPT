@@ -19,7 +19,7 @@ def getText():
 
 
 def chat(text):
-    openai.api_key = "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"
+    openai.api_key = ""
 
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
